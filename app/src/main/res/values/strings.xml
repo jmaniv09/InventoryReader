@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">InventoryReader</string>
+    <string name="all_devices">Lista Dispositivos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="scan">Scan</string>
+    <string name="scan_only_qr_codes">Escanear código QR</string>
+    <string name="title_activity_device">DeviceActivity</string>
+    <string name="title_activity_list_all_devices">ListAllDevices</string>
+    <string name="nameDevice">Nombre dispositivo</string>
+    <string name="ipDevice">IP Dispositivo</string>
+    <string name="serialnDevice">Número de serie dispositivo</string>
+    <string name="placeDevice">Ubicación dispositivo</string>
+    <string name="registerUpdateDevice">Datos Dispositivo</string>
+    <string name="scanSerialNumber">Scan</string>
+    <string name="updateButton">Actualizar</string>
+    <string name="registerButton">Registrar</string>
+    <string name="registerDevice">Registrar Dispositivo</string>
+    <string name="selectModel">Modelo:</string>
+    <string name="selectStatus">Estado:</string>
+    <string name="sectorDevice">Sector</string>
+    <string name="lastUpdateDevice">Fecha inventario</string>
+    <string name="lastInventory">Último inventario</string>
+    <string name="selecDevice">Seleccionar Dispositivo</string>
+    <string name="observation">Observaciones</string>
+    <string name="getAllDevices">Todos los dispositivos</string>
+
+</resources>

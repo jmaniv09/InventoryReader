@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="5dp" 
+    android:background="@color/bluef">
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/unnamed" />
+
+    <Button
+        android:id="@+id/qrscan_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="launchQRScanner"
+        android:background="@drawable/button_selector"
+        android:text="@string/scan_only_qr_codes" />
+    
+    <Button
+        android:layout_marginTop="20dp"
+        android:id="@+id/devices_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="getAllDevices"
+        android:background="@drawable/button_selector"
+        android:text="Todos los dispositivos<" />
+
+</LinearLayout>

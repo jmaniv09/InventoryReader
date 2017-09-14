@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_prompt">Selecciona Dispositivo</string>
+    <string-array name="device_arrays">
+        <item>Todos</item>
+        <item>Neo</item>
+        <item>Tablet</item>
+        <item>Impresoras Tablet</item>
+        <item>Impresoras Tec</item>
+        <item>Thin Client</item>
+        <item>Portátiles</item>
+        <item>Embitrolley</item>
+        <item>Impresoras Papel</item>
+        <item>Impresoras Picking</item>
+    </string-array>
+</resources>

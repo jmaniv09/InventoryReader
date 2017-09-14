@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_prompt">Selecciona estado dispositivo</string>
+    <string-array name="status_array">
+        <item>Averiada</item>
+        <item>Activa</item>
+        <item>Reparando</item>
+        <item>Perdida</item>
+    </string-array>
+</resources>

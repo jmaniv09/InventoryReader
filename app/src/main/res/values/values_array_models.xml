@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="model_prompt">Selecciona modelo dispositivo:</string>
+    <string-array name="model_arrays">
+        <item>MC 3200</item>
+        <item>QLN 320</item>
+        <item>QLN 420</item>
+        <item>TOSHIBA BEX4T1</item>
+        <item>LENOVO M93</item>
+        <item>LENOVO M700</item>
+        <item>HP 5540</item>
+        <item>HP NCIS</item>
+        <item>EMBIPOS AIR</item>
+        <item>EMBITROLLEY</item>
+        <item>PSION PX750</item>
+        <item>NEXUS7 2013</item>
+    </string-array>
+</resources>
