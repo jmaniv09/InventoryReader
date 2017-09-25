@@ -3,9 +3,7 @@ package app.num.barcodescannerproject;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itteam.inventoryreader.entity.Device;
-import com.itteam.inventoryreader.entity.ResultGetDevices;
-import com.itteam.inventoryreader.restservice.RestfulWebService;
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -27,6 +25,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import entity.Device;
+import entity.ResultGetDevices;
+import restfullwebservice.RestfulWebService;
 
 public class ListAllDevices extends Activity {
 	ResultGetDevices resultGetDevices;

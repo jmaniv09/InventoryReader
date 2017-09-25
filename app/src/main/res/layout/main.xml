@@ -27,6 +27,6 @@
         android:layout_height="wrap_content"
         android:onClick="getAllDevices"
         android:background="@drawable/button_selector"
-        android:text="Todos los dispositivos<" />
+        android:text="Todos los dispositivos" />
 
 </LinearLayout>
