@@ -2,14 +2,11 @@ package app.num.barcodescannerproject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import com.google.zxing.Result;
@@ -17,9 +14,6 @@ import com.google.zxing.Result;
 
 public class MainActivity extends Activity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
-
-    private static final int ZBAR_SCANNER_REQUEST = 0;
-    private static final int ZBAR_QR_SCANNER_REQUEST = 1;
     private Button btn;
     private Button list;
     private boolean cameraActivated;
@@ -64,12 +58,9 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
         str = str.trim();
         // str= str.trim(); // lo reinicia a un valor sin caracteres
         // prohibidos.
-        Intent myIntent = new Intent(MainActivity.this, DeviceActivity.class);
-        myIntent.putExtra("device", str); //Optional parameters
-        MainActivity.this.startActivity(myIntent);
-        Log.w("qrinv1", "ha leido: " + str + " valor typeQR: " );
 
-        Handler handler = new Handler();
+
+        /*Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +68,12 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
                 mScannerView.stopCamera(); //<- then stop the camera
                 resetView();
             }
-        }, 100);
+        }, 1);*/
+
+        Intent myIntent = new Intent(MainActivity.this, DeviceActivity.class);
+        myIntent.putExtra("device", str); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
+        Log.w("qrinv1", "ha leido: " + str + " valor typeQR: " );
     }
 
     public void onBackPressed(){
