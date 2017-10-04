@@ -50,25 +50,9 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
 
         Log.e("handler", rawResult.getText()); // Prints scan results
         Log.e("handler", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode
-        /*
-		 * switch (requestCode) { case ZBAR_SCANNER_REQUEST: case
-		 * ZBAR_QR_SCANNER_REQUEST:
-		 */
+
         String str = rawResult.getText();
         str = str.trim();
-        // str= str.trim(); // lo reinicia a un valor sin caracteres
-        // prohibidos.
-
-
-        /*Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mScannerView.removeAllViews(); //<- here remove all the views, it will make an Activity having no View
-                mScannerView.stopCamera(); //<- then stop the camera
-                resetView();
-            }
-        }, 1);*/
 
         Intent myIntent = new Intent(MainActivity.this, DeviceActivity.class);
         myIntent.putExtra("device", str); //Optional parameters
