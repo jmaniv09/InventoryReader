@@ -1,4 +1,4 @@
-package app.num.barcodescannerproject;
+package app.decathlon.inventoryreader;
 
 
 import android.app.Activity;
