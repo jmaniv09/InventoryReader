@@ -2,8 +2,7 @@
   "project_info": {
     "project_number": "639030719170",
     "firebase_url": "https://inventoryreader.firebaseio.com",
-    "project_id": "inventoryreader",
-    "storage_bucket": "inventoryreader.appspot.com"
+    "project_id": "inventoryreader"
   },
   "client": [
     {

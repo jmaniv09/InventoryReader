@@ -1,15 +1,32 @@
 package app.decathlon.inventoryreader;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import entity.SharedPrefManager;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import restfullwebservice.RestfulWeb;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.zxing.Result;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends Activity implements ZXingScannerView.ResultHandler {
@@ -17,6 +34,7 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
     private Button btn;
     private Button list;
     private boolean cameraActivated;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +46,61 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
 	            "fonts/angrybirds.ttf");
         btn.setTypeface(face);
         list.setTypeface(face);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                saveTokenGenerated();
+            }
+        },10000);
+    }
+
+    public void saveTokenGenerated(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Registering Device...");
+        progressDialog.show();
+
+        final String token = SharedPrefManager.getInstance(this).getDeviceToken();
+        final String email = "itteamprat@gmail.com";
+
+        if (token == null) {
+            progressDialog.dismiss();
+            Toast.makeText(this, "Token not generated", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, RestfulWeb.URL_REGISTER_DEVICE,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            Toast.makeText(MainActivity.this, obj.getString("message"), Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", email);
+                params.put("token", token);
+                return params;
+            }
+        };
+
+        MyVolley.getInstance(this).addToRequestQueue(stringRequest);
     }
 
     public void launchQRScanner(View v) {

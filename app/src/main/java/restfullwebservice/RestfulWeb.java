@@ -6,6 +6,11 @@ public class RestfulWeb {
 	 * Constante con la información del Servidor.
 	 */
 	protected final static String HTTP_REST_INVENTORY = "http://itteamprat.manitec.xyz/inventory/";
+
+	public static final String URL_REGISTER_DEVICE = "http://notificationserver.manitec.xyz/RegisterDevice.php";
+	public static final String URL_SEND_SINGLE_PUSH = "http://notificationserver.manitec.xyz/sendSinglePush.php";
+	public static final String URL_SEND_MULTIPLE_PUSH = "http://notificationserver.manitec.xyz/sendMultiplePush.php";
+	public static final String URL_FETCH_DEVICES = "http://notificationserver.manitec.xyz/GetRegisteredDevices.php";
 	/**
 	 * Tag inicial de todas las llamadas, para saber si la llamada ha sido
 	 * correcta.
@@ -63,5 +68,7 @@ public class RestfulWeb {
 	protected static final String TAG_TEC_PRINTER = "prat_tec_printer";
 	protected static final String TAG_TC = "prat_thin_client";
 	protected static final String TAG_VOCAL_PRINTER = "prat_vocal_printer";
+
+
 
 }
