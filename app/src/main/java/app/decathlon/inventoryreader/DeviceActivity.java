@@ -2,9 +2,12 @@ package app.decathlon.inventoryreader;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -14,8 +17,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import entity.Device;
-import restfullwebservice.RestfulWebService;
+import restfullwebservice.RestfulWeb;
+
 
 public class DeviceActivity extends Activity {
 	private String nameDevice;
@@ -46,6 +61,7 @@ public class DeviceActivity extends Activity {
 
 	private static final int ZBAR_SCANNER_REQUEST = 0;
 	private static final int ZBAR_QR_SCANNER_REQUEST = 1;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +70,6 @@ public class DeviceActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			nameDevice = extras.getString("device");
-			/*
-			 * String delimiter = "-"; String[] temp; temp =
-			 * str.split(delimiter); /* for (int i = 0; i < temp.length; i++)
-			 * System.out.println(temp[i]);
-			 */
-			/*
-			 * nameDevice = temp[0]; ipDevice = temp[1];
-			 */
 		}
 
 		deviceName = (EditText) findViewById(R.id.eNameDevice);
@@ -78,7 +86,7 @@ public class DeviceActivity extends Activity {
 		models = getResources().getStringArray(R.array.model_arrays);
 
 		if (nameDevice != null && !nameDevice.isEmpty()) {
-			new GetDeviceByName().execute();
+			GetDeviceByName();
 		} else {
 			updateDevice.setEnabled(false);
 		}
@@ -98,7 +106,7 @@ public class DeviceActivity extends Activity {
 						| deviceStatus.equals("") | deviceModels.equals("")) {
 					showError();
 				} else {
-					new updateDevice().execute();
+					updateDevice();
 				}
 			}
 
@@ -117,7 +125,7 @@ public class DeviceActivity extends Activity {
 						| serialnDevice.equals("") | placeDevice.equals("")) {
 					showError();
 				} else {
-					new registerDevice().execute();
+					registerDevice();
 				}
 			}
 
@@ -135,7 +143,8 @@ public class DeviceActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				deviceStatus = (String) statusDevice.getSelectedItem();
+				deviceStatus = String.valueOf(position);
+				Toast.makeText(DeviceActivity.this, deviceStatus, Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -171,255 +180,189 @@ public class DeviceActivity extends Activity {
 				Toast.LENGTH_SHORT).show();
 	}
 
-	/*public void launchScanner(View v) {
-		if (isCameraAvailable()) {
-			Intent intent = new Intent(this, ZBarScannerActivity.class);
-			startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
-		} else {
-			Toast.makeText(this, "Rear Facing Camera Unavailable",
-					Toast.LENGTH_SHORT).show();
-		}
-	}*/
 
-	public class GetDeviceByName extends AsyncTask<Void, String, Void> {
 
-		@Override
-		protected void onPreExecute() {
-			dialog = new ProgressDialog(DeviceActivity.this);
-			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialog.setCancelable(false);
-			dialog.setMessage("Cargando Dispositivos! Por favor espere unos segundos...!");
-			dialog.show();
+	public void GetDeviceByName(){
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setMessage("Cargando Dispositivos! Por favor espere unos segundos...!");
+		progressDialog.show();
 
-		}
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, RestfulWeb.HTTP_REST_INVENTORY
+				+ "getDeviceInfo?token=" + RestfulWeb.TAG_TOKEN + "&nameDevice="
+				+ nameDevice,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+                        Toast.makeText(DeviceActivity.this, response, Toast.LENGTH_LONG).show();
+						progressDialog.dismiss();
+						try {
+							JSONObject obj = new JSONObject(response);
+							resultGetDevice = getDevice(obj);
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+							if (resultGetDevice != null) {
+								deviceName.setText(resultGetDevice.getNameDevice());
+								deviceIP.setText(resultGetDevice.getIpDevice());
+								deviceSerial.setText(resultGetDevice.getSerialDevice());
+								devicePlace.setText(resultGetDevice.getPlaceDevice());
+								lastDateInventory.setText(resultGetDevice
+										.getLastInventory());
+								observation.setText(resultGetDevice.getObservation());
 
-		@Override
-		protected Void doInBackground(Void... unused) {
-			resultGetDevice = RestfulWebService.getDeviceByName(nameDevice);
-			return (null);
-		}
+								lastDateInventory.setFocusable(false);
+								lastDateInventory.setClickable(false);
 
-		@Override
-		protected void onPostExecute(Void unused) {
+								updateDevice.setEnabled(true);
+								registerDevice.setEnabled(false);
+								// int spinnerPosition =
+								// dataAdapter.getPosition(resultGetDevice.getSector());
 
-			if (resultGetDevice != null) {
-				switch (resultGetDevice.getError()) {
-				case 0:
-					// NO HAY ERROR
-					try {
-						dialog.dismiss();
-						dialog = null;
-						deviceName.setText(resultGetDevice.getNameDevice());
-						deviceIP.setText(resultGetDevice.getIpDevice());
-						deviceSerial.setText(resultGetDevice.getSerialDevice());
-						devicePlace.setText(resultGetDevice.getPlaceDevice());
-						lastDateInventory.setText(resultGetDevice
-								.getLastInventory());
-						observation.setText(resultGetDevice.getObservation());
+								// set the default according to value
+								modelDevice.setSelection(getIndex(modelDevice,
+										resultGetDevice.getModel()));
+								statusDevice.setSelection(resultGetDevice.getStatus());
 
-						lastDateInventory.setFocusable(false);
-						lastDateInventory.setClickable(false);
-
-						updateDevice.setEnabled(true);
-						registerDevice.setEnabled(false);
-						// int spinnerPosition =
-						// dataAdapter.getPosition(resultGetDevice.getSector());
-
-						// set the default according to value
-						modelDevice.setSelection(getIndex(modelDevice,
-								resultGetDevice.getModel()));
-						statusDevice.setSelection(resultGetDevice.getStatus());
-					} catch (Exception e) {
-						// nothing
-					}
-					break;
-
-				case 1:
-					try {
-						dialog.dismiss();
-						dialog = null;
-						deviceName.setText(nameDevice);
-						deviceIP.setText(ipDevice);
-						lastDateInventory.setEnabled(false);
-						updateDevice.setEnabled(false);
-						registerDevice.setEnabled(true);
-						// goToTarget = false;
-					} catch (Exception e) {
-						// nothing
-					}
-					// ERROR WEBSERVICE
-					System.out.println("Error WebService");
-					break;
-
-				default:
-					break;
-				}
-			}
-		}
-
-	}
-
-	public class registerDevice extends AsyncTask<Void, String, Void> {
-
-		@Override
-		protected void onPreExecute() {
-			dialog = new ProgressDialog(DeviceActivity.this);
-			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialog.setCancelable(false);
-			dialog.setMessage("Registrando nuevo dispositivo!");
-			dialog.show();
-			position = statusDevice.getSelectedItemPosition();
-		}
-
-		@Override
-		protected Void doInBackground(Void... unused) {
-			resultGetDevice = RestfulWebService.registerDevice(nameDevice,
-					serialnDevice, ipDevice, placeDevice, position , deviceModels, deviceObserv);
-			return (null);
-		}
-
-		@Override
-		protected void onPostExecute(Void unused) {
-
-			if (resultGetDevice != null) {
-				switch (resultGetDevice.getError()) {
-				case 0:
-					// NO HAY ERROR
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(DeviceActivity.this,
-								resultGetDevice.getMessage(),
-								Toast.LENGTH_SHORT).show();
-					} catch (Exception e) {
-						// nothing
-					}
-					break;
-
-				case 1:
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(
-								DeviceActivity.this,
-								"Error al registrar dispositivo, vuelva a probar mas tarde",
-								Toast.LENGTH_SHORT).show();
-						// goToTarget = false;
-					} catch (Exception e) {
-						// nothing
-					}
-					// ERROR WEBSERVICE
-					System.out.println("Error WebService");
-					break;
-				case 2:
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(
-								DeviceActivity.this,
-								"Error al registrar dispositivo, vuelva a probar mas tarde",
-								Toast.LENGTH_SHORT).show();
-						// goToTarget = false;
-					} catch (Exception e) {
-						// nothing
-					}
-					// ERROR WEBSERVICE
-					System.out.println("Error WebService");
-					break;
-
-				default:
-					break;
-				}
-			}
-		}
-
-	}
-
-	public class updateDevice extends AsyncTask<Void, String, Void> {
-
-		@Override
-		protected void onPreExecute() {
-			dialog = new ProgressDialog(DeviceActivity.this);
-			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialog.setCancelable(false);
-			dialog.setMessage("Actualizando dispositivo!");
-			dialog.show();
-			position =statusDevice.getSelectedItemPosition();
-
-		}
-		@Override
-		protected Void doInBackground(Void... unused) {
-			resultGetDevice = RestfulWebService.updateDevice(nameDevice,
-					serialnDevice, ipDevice, placeDevice, position , deviceModels, deviceObserv);
-			return (null);
-		}
-
-		@Override
-		protected void onPostExecute(Void unused) {
-
-			if (resultGetDevice != null) {
-				switch (resultGetDevice.getError()) {
-				case 0:
-					// NO HAY ERROR
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(DeviceActivity.this,
-								resultGetDevice.getMessage(),
-								Toast.LENGTH_SHORT).show();
-						if (nameDevice != null && !nameDevice.isEmpty()) {
-							new GetDeviceByName().execute();
-						} else {
-							updateDevice.setEnabled(false);
+							}
+								} catch (JSONException e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						// nothing
 					}
-					break;
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						progressDialog.dismiss();
+						showAlertDialogError();
+					}
+				}) {
 
-				case 1:
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(
-								DeviceActivity.this,
-								"Error al registrar dispositivo, vuelva a probar mas tarde",
-								Toast.LENGTH_SHORT).show();
-						// goToTarget = false;
-					} catch (Exception e) {
-						// nothing
-					}
-					// ERROR WEBSERVICE
-					System.out.println("Error WebService");
-					break;
-				case 2:
-					try {
-						dialog.dismiss();
-						dialog = null;
-						Toast.makeText(
-								DeviceActivity.this,
-								"Error al registrar dispositivo, vuelva a probar mas tarde",
-								Toast.LENGTH_SHORT).show();
-						// goToTarget = false;
-					} catch (Exception e) {
-						// nothing
-					}
-					// ERROR WEBSERVICE
-					System.out.println("Error WebService");
-					break;
+		};
 
-				default:
-					break;
-				}
+		MyVolley.getInstance(this).addToRequestQueue(stringRequest);
+	}
+
+
+	public void registerDevice(){
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setMessage("Cargando Dispositivos! Por favor espere unos segundos...!");
+		progressDialog.show();
+
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, RestfulWeb.HTTP_REST_INVENTORY
+				+ "registDevice?token=" + RestfulWeb.TAG_TOKEN + "&nameDevice="
+				+ nameDevice+ "&serialDevice="
+				+ serialnDevice + "&ipDevice=" + ipDevice + "&locationDevice=" + placeDevice+ "&model=" + deviceModels + "&status=" + deviceStatus,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						progressDialog.dismiss();
+						try {
+							JSONObject obj = new JSONObject(response);
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						progressDialog.dismiss();
+						showAlertDialogError();
+					}
+				}) {
+
+		};
+
+		MyVolley.getInstance(this).addToRequestQueue(stringRequest);
+	}
+
+	public void updateDevice(){
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setMessage("Cargando Dispositivos! Por favor espere unos segundos...!");
+		progressDialog.show();
+
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, RestfulWeb.HTTP_REST_INVENTORY + "updateDeviceInfo?token="
+				+ RestfulWeb.TAG_TOKEN + "&nameDevice=" + nameDevice + "&serialDevice="
+				+ serialnDevice + "&ipDevice=" + ipDevice + "&locationDevice=" + placeDevice + "&status=" + deviceStatus + "&observation=" + deviceObserv + "&model=" + deviceModels,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						progressDialog.dismiss();
+						try {
+							JSONObject obj = new JSONObject(response);
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						progressDialog.dismiss();
+						showAlertDialogError();
+					}
+				}) {
+
+		};
+
+		MyVolley.getInstance(this).addToRequestQueue(stringRequest);
+	}
+
+	public Device getDevice(JSONObject jsonObj){
+		Device device = new Device();
+		device.setError(0);
+		try {
+
+			// Primero miramos el status.
+			String status = jsonObj.getString(RestfulWeb.TAG_STATUS);
+			if (status.equals("error")) {
+				// String message = jsonObj.getString(TAG_MESSAGE);
+				device.setError(1);
+				System.out.println(jsonObj.getString(RestfulWeb.TAG_MESSAGE));
+				System.out.println("El dispositivo no existe");
+			} else {
+				System.out.println("Entra aqui");
+				JSONObject dataObj = jsonObj.getJSONObject(RestfulWeb.TAG_DATA2);
+				device.setIdDevice(new String(dataObj.getString(RestfulWeb.TAG_ID)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setNameDevice(new String(dataObj.getString(RestfulWeb.TAG_NAME)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setIpDevice(new String(dataObj.getString(RestfulWeb.TAG_IP)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setSerialDevice(new String(dataObj.getString(RestfulWeb.TAG_SERIAL)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setPlaceDevice(new String(dataObj.getString(RestfulWeb.TAG_PLACE)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setModel(new String(dataObj.getString(RestfulWeb.TAG_MODEL)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setLastUpdate(new String(dataObj.getString(RestfulWeb.TAG_DATE)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setLastInventory(new String(dataObj.getString(RestfulWeb.TAG_DATE_INVENTORY)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setObservation(new String(dataObj.getString(RestfulWeb.TAG_OBSERVATION)
+						.getBytes("ISO-8859-1"), "UTF-8"));
+				device.setStatus(Integer.parseInt(new String(dataObj.getString(RestfulWeb.TAG_STATUS_DEVICE)
+						.getBytes("ISO-8859-1"), "UTF-8")));
+				/*
+				 * frase.setTextoFrase(dataObj.getString(TAG_TEXTO));
+				 * frase.setAutorFrase(dataObj.getString(TAG_AUTOR));
+				 */
+
 			}
+		}  catch (IOException e) {
+			Log.e("Error IOException", e.getMessage());
+			device.setError(2);
+		} catch (JSONException e) {
+			Log.e("Error JSONException", e.getMessage());
+			device.setError(2);
+		} catch (Exception e) {
+			Log.e("Error Exception", e.getMessage());
+			device.setError(2);
 		}
 
+		return device;
 	}
 
-	public boolean isCameraAvailable() {
-		PackageManager pm = getPackageManager();
-		return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
-	}
 
 	public int getIndex(Spinner sectorOptions2, String sector) {
 		// TODO Auto-generated method stub
@@ -440,26 +383,18 @@ public class DeviceActivity extends Activity {
 			dialog.cancel();
 		}
 	}
+	public void onBackPressed(){
 
-/*	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ZBAR_SCANNER_REQUEST:
-		case ZBAR_QR_SCANNER_REQUEST:
-			if (resultCode == RESULT_OK) {
-				// Toast.makeText(this, "Scan Result = " +
-				// data.getStringExtra(ZBarConstants.SCAN_RESULT),
-				// Toast.LENGTH_SHORT).show();
-				String str = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-				Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-				deviceSerial.setText(str);
-			} else if (resultCode == RESULT_CANCELED && data != null) {
-				String error = data.getStringExtra(ZBarConstants.ERROR_INFO);
-				if (!TextUtils.isEmpty(error)) {
-					Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
-				}
-			}
-			break;
-		}
-	}*/
+		finish();
+
+	}
+
+	public void showAlertDialogError() {
+		// TODO Auto-generated method stub
+		Context context = getApplicationContext();
+		CharSequence text = "Error de conexión con el Servidor. Por favor pruebe más tarde!";
+		int duration = Toast.LENGTH_SHORT;
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
+	}
 }

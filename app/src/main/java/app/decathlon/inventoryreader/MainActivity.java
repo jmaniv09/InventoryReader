@@ -120,7 +120,6 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
 
     public void handleResult(Result rawResult) {
         // Do something with the result here
-
         Log.e("handler", rawResult.getText()); // Prints scan results
         Log.e("handler", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode
 
