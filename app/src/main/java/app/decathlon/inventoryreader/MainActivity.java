@@ -77,7 +77,7 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
                         progressDialog.dismiss();
                         try {
                             JSONObject obj = new JSONObject(response);
-                            Toast.makeText(MainActivity.this, obj.getString("message"), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, obj.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements ZXingScannerView.ResultHan
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
 

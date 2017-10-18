@@ -144,7 +144,6 @@ public class DeviceActivity extends Activity {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				deviceStatus = String.valueOf(position);
-				Toast.makeText(DeviceActivity.this, deviceStatus, Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -193,12 +192,11 @@ public class DeviceActivity extends Activity {
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {
-                        Toast.makeText(DeviceActivity.this, response, Toast.LENGTH_LONG).show();
 						progressDialog.dismiss();
 						try {
 							JSONObject obj = new JSONObject(response);
 							resultGetDevice = getDevice(obj);
-							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_SHORT).show();
 							if (resultGetDevice != null) {
 								deviceName.setText(resultGetDevice.getNameDevice());
 								deviceIP.setText(resultGetDevice.getIpDevice());
@@ -220,6 +218,9 @@ public class DeviceActivity extends Activity {
 								modelDevice.setSelection(getIndex(modelDevice,
 										resultGetDevice.getModel()));
 								statusDevice.setSelection(resultGetDevice.getStatus());
+								if(resultGetDevice.getError()==1){
+									deviceName.setText(nameDevice);
+								}
 
 							}
 								} catch (JSONException e) {
@@ -231,7 +232,7 @@ public class DeviceActivity extends Activity {
 					@Override
 					public void onErrorResponse(VolleyError error) {
 						progressDialog.dismiss();
-						showAlertDialogError();
+
 					}
 				}) {
 
@@ -256,7 +257,7 @@ public class DeviceActivity extends Activity {
 						progressDialog.dismiss();
 						try {
 							JSONObject obj = new JSONObject(response);
-							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_SHORT).show();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -289,7 +290,7 @@ public class DeviceActivity extends Activity {
 						progressDialog.dismiss();
 						try {
 							JSONObject obj = new JSONObject(response);
-							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+							Toast.makeText(DeviceActivity.this, obj.getString("status"), Toast.LENGTH_SHORT).show();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

@@ -241,7 +241,7 @@ public class ListAllDevices extends Activity {
 
 							resultGetDevices = convertResponse(obj);
 							printScores(resultGetDevices);
-							//Toast.makeText(ListAllDevices.this, obj.getString("status"), Toast.LENGTH_LONG).show();
+							Toast.makeText(ListAllDevices.this, obj.getString("status"), Toast.LENGTH_SHORT).show();
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
