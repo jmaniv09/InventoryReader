@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+        android:id="@+id/menu_readQR"
+        android:icon="@drawable/ic_mail"
+        android:title="Read QR"/>
+
+        <item
+            android:id="@+id/menu_all"
+            android:icon="@drawable/ic_all"
+            android:title="Todos los dispositivos"/>
+
+        <item
+            android:id="@+id/menu_manual"
+            android:icon="@drawable/ic_manual"
+            android:title="Agregar manual"/>
+
+    </group>
+
+    <item android:title="Otras opciones">
+        <menu>
+            <item
+                android:id="@+id/menu_incidence"
+                android:icon="@drawable/ic_incidence"
+                android:title="Incidencias"/>
+
+        </menu>
+    </item>
+
+</menu>

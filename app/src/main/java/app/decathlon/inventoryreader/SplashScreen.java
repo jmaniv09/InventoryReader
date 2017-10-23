@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.decathlon.inventoryreader.Activities.NavigationDrawer;
 import restfullwebservice.RestfulWeb;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -40,7 +41,7 @@ public class SplashScreen extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                Intent intent = new Intent(SplashScreen.this, NavigationDrawer.class);
                 SplashScreen.this.startActivity(intent);
             }
         },3000);
