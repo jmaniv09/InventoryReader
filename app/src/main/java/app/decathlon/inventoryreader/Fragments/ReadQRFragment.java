@@ -63,7 +63,7 @@ public class ReadQRFragment extends Fragment implements ZXingScannerView.ResultH
         View v = inflater.inflate(R.layout.fragment_read_qr, container, false);
 
         //Para poder realizar el onBackPressed();
-        ((NavigationDrawer) getActivity()).setOnBackPressedListener(this);
+        ((NavigationDrawer)getActivity()).setOnBackPressedListener(this);
 
         //Tipo de letra
         /*Typeface face = Typeface.createFromAsset(getActivity().getAssets(),"font/angrybirds.ttf");

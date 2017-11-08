@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import app.decathlon.inventoryreader.Fragments.AllDispositivesFragment;
+import app.decathlon.inventoryreader.Fragments.PrincipalFragment;
 import app.decathlon.inventoryreader.Fragments.ReadQRFragment;
 import app.decathlon.inventoryreader.MainActivity;
 import app.decathlon.inventoryreader.R;
@@ -53,7 +54,7 @@ public class NavigationDrawer extends AppCompatActivity {
         //--------------------------------
 
         //COLOCAR UN FRAGMENT DE INICIO:
-        Fragment fr = new AllDispositivesFragment();
+        Fragment fr = new PrincipalFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fr)
